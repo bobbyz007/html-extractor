@@ -1,7 +1,6 @@
 package org.example;
 
 import org.apache.commons.lang3.StringUtils;
-import org.apache.poi.common.usermodel.HyperlinkType;
 import org.apache.poi.hssf.usermodel.HSSFDataFormat;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.streaming.SXSSFWorkbook;
@@ -14,7 +13,6 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 public class HtmlExtractor {
@@ -48,7 +46,7 @@ public class HtmlExtractor {
             String memberType = h2Ele.text();
             Element memberListDiv = h2Ele.nextElementSibling();
 
-            System.out.println("Start extracting " + memberType);
+            System.out.println("Start extracting: " + memberType);
             // 遍历每一个member list
             for (Element memberHref : memberListDiv.select("div.member > a")) {
                 String memberUrl = memberHref.attr("href");
@@ -56,11 +54,44 @@ public class HtmlExtractor {
                 resultMembers.add(member);
             }
 
-            System.out.println("End extracting successfully for " + memberType);
+            System.out.println("End extracting successfully: " + memberType);
             Thread.sleep(SLEEP_MILLIS);
         }
 
         return resultMembers;
+    }
+
+    static Member parseMember(String memberType, String url) throws IOException {
+        Document memberDoc = Jsoup.connect(url).get();
+        Element pageEle = memberDoc.selectFirst("div#page");
+        Element sectionEle = pageEle.selectFirst("section.main");
+
+        Element titleDiv = sectionEle.selectFirst("section > div > div > div.twelve");
+        Element contentDiv = null;
+        if (titleDiv != null) {
+            contentDiv = titleDiv.parent().nextElementSibling();
+        } else {
+            contentDiv = sectionEle.selectFirst("section > div > div");
+        }
+
+        String title = titleDiv.selectFirst("h1").text();
+
+        String desc = contentDiv.selectFirst("div.six").wholeText();
+
+        Element detailsDiv = contentDiv.selectFirst("div > div.job-details");
+
+        Member member = new Member(memberType, title, desc.trim());
+        for (Element h6Ele : detailsDiv.select("h6")) {
+            String fieldName = h6Ele.text();
+            String fieldValue = h6Ele.nextElementSibling().text();
+            // extract mailto
+            if (fieldName.equals(Member.FIELD_EMAIL)) {
+                fieldValue = h6Ele.nextElementSibling().selectFirst("a").attr("href");
+            }
+            member.setValue(fieldName, fieldValue);
+        }
+
+        return member;
     }
 
     static List<String> CELL_HEADERS = new ArrayList<>();
@@ -92,30 +123,6 @@ public class HtmlExtractor {
             convertDataToRow(member, row);
         }
         return workbook;
-    }
-
-    static void convertDataToRow(Member member, Row row) {
-        int cellNumber = 0;
-        createCell(cellNumber++, row, member.getType());
-        createCell(cellNumber++, row, member.getTitle());
-        createCell(cellNumber++, row, member.getAddress());
-        createCell(cellNumber++, row, member.getTelephone());
-
-        Cell cell = createCell(cellNumber++, row, member.getEmail());
-        Hyperlink link = row.getSheet().getWorkbook().getCreationHelper().createHyperlink(HyperlinkType.EMAIL);
-        link.setAddress(member.getEmail());
-        cell.setHyperlink(link);
-
-        createCell(cellNumber++, row, member.getWebUrl());
-        createCell(cellNumber++, row, member.getTwitterAccount());
-        createCell(cellNumber++, row, member.getContacts());
-        createCell(cellNumber++, row, member.getDesc());
-    }
-
-    static Cell createCell(int cellNumber, Row row, String value) {
-        Cell cell = row.createCell(cellNumber);
-        cell.setCellValue(StringUtils.isNotBlank(value) ? value : "");
-        return cell;
     }
 
     static Sheet buildSheet(Workbook workbook) {
@@ -168,6 +175,36 @@ public class HtmlExtractor {
         return sheet;
     }
 
+    static void convertDataToRow(Member member, Row row) {
+        int cellNumber = 0;
+        createCell(cellNumber++, row, member.getType());
+        createCell(cellNumber++, row, member.getTitle());
+        createCell(cellNumber++, row, member.getAddress());
+        createCell(cellNumber++, row, member.getTelephone());
+
+        String email = member.getEmail();
+        if (StringUtils.startsWithIgnoreCase(email, "mailto:")) {
+            email = email.substring(7);
+        }
+        createCell(cellNumber++, row, StringUtils.trim(email));
+        // comment as email may not be valid. TODO: Aad validation
+        /*Cell cell = createCell(cellNumber++, row, member.getEmail());
+        Hyperlink link = row.getSheet().getWorkbook().getCreationHelper().createHyperlink(HyperlinkType.EMAIL);
+        link.setAddress(member.getEmail());
+        cell.setHyperlink(link);*/
+
+        createCell(cellNumber++, row, member.getWebUrl());
+        createCell(cellNumber++, row, member.getTwitterAccount());
+        createCell(cellNumber++, row, member.getContacts());
+        createCell(cellNumber++, row, member.getDesc());
+    }
+
+    static Cell createCell(int cellNumber, Row row, String value) {
+        Cell cell = row.createCell(cellNumber);
+        cell.setCellValue(StringUtils.isNotBlank(value) ? value : "");
+        return cell;
+    }
+
     static void write(Workbook workbook, String outputFilePath) {
         // 以文件的形式输出工作簿对象
         FileOutputStream fileOut = null;
@@ -194,39 +231,6 @@ public class HtmlExtractor {
                 System.err.println("关闭输出流时发生错误，错误原因：" + e.getMessage());
             }
         }
-    }
-
-    static Member parseMember(String memberType, String url) throws IOException {
-        Document memberDoc = Jsoup.connect(url).get();
-        Element pageEle = memberDoc.selectFirst("div#page");
-        Element sectionEle = pageEle.selectFirst("section.main");
-
-        Element titleDiv = sectionEle.selectFirst("section > div > div > div.twelve");
-        Element contentDiv = null;
-        if (titleDiv != null) {
-            contentDiv = titleDiv.parent().nextElementSibling();
-        } else {
-            contentDiv = sectionEle.selectFirst("section > div > div");
-        }
-
-        String title = titleDiv.selectFirst("h1").text();
-
-        String desc = contentDiv.selectFirst("div.six").wholeText();
-
-        Element detailsDiv = contentDiv.selectFirst("div > div.job-details");
-
-        Member member = new Member(memberType, title, desc.trim());
-        for (Element h6Ele : detailsDiv.select("h6")) {
-            String fieldName = h6Ele.text();
-            String fieldValue = h6Ele.nextElementSibling().text();
-            // extract mailto
-            if (fieldName.equals(Member.FIELD_EMAIL)) {
-                fieldValue = h6Ele.nextElementSibling().selectFirst("a").attr("href");
-            }
-            member.setValue(fieldName, fieldValue);
-        }
-
-        return member;
     }
 }
 
