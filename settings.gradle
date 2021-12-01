@@ -1,0 +1,3 @@
+rootProject.name = 'html-extractor'
+include 'main-demo'
+
