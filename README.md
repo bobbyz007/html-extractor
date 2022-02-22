@@ -1,2 +1,2 @@
 # html-extractor
-Extract html content
+Extract html or json content

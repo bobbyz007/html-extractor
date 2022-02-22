@@ -8,6 +8,7 @@ import org.example.entity.Member;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
+import reactor.util.function.Tuple2;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -30,7 +31,7 @@ public class HtmlExtractor {
         // output result members
         // https://www.cnblogs.com/Dreamer-1/p/10469430.html
         Workbook workbook = export(resultMembers);
-        write(workbook, args[0]);
+        Util.write(workbook, args[0]);
     }
 
     static List<Member> fetchHtmlContent(String url) throws InterruptedException, IOException {
@@ -94,23 +95,23 @@ public class HtmlExtractor {
         return member;
     }
 
-    static List<String> CELL_HEADERS = new ArrayList<>();
+    static List<Util.Header> CELL_HEADERS = new ArrayList<>();
     static {
-        CELL_HEADERS.add("Type");
-        CELL_HEADERS.add("Title");
-        CELL_HEADERS.add("Address");
-        CELL_HEADERS.add("Telephone");
-        CELL_HEADERS.add("Email");
-        CELL_HEADERS.add("Web");
-        CELL_HEADERS.add("Twitter");
-        CELL_HEADERS.add("Contacts");
-        CELL_HEADERS.add("Description");
+        CELL_HEADERS.add(new Util.Header("Type", 4000));
+        CELL_HEADERS.add(new Util.Header("Title", 4000));
+        CELL_HEADERS.add(new Util.Header("Address", 4000));
+        CELL_HEADERS.add(new Util.Header("Telephone", 4000));
+        CELL_HEADERS.add(new Util.Header("Email", 4000));
+        CELL_HEADERS.add(new Util.Header("Web", 4000));
+        CELL_HEADERS.add(new Util.Header("Twitter", 4000));
+        CELL_HEADERS.add(new Util.Header("Contacts", 4000));
+        CELL_HEADERS.add(new Util.Header("Description", 9000));
     }
 
     static Workbook export(List<Member> members) {
         Workbook workbook = new SXSSFWorkbook();
         // sheet header
-        Sheet sheet = buildSheet(workbook);
+        Sheet sheet = Util.buildSheet(workbook, CELL_HEADERS);
 
         //构建每行的数据内容
         int rowNum = 1;
@@ -125,112 +126,32 @@ public class HtmlExtractor {
         return workbook;
     }
 
-    static Sheet buildSheet(Workbook workbook) {
-        // build data sheet
-        Sheet sheet = workbook.createSheet();
-        CellStyle textCellStyle= workbook.createCellStyle();
-        textCellStyle.setDataFormat(HSSFDataFormat.getBuiltinFormat("@"));
-
-        for (int i = 0; i < CELL_HEADERS.size(); i++) {
-            if (i == CELL_HEADERS.size() - 1) {
-                sheet.setColumnWidth(i, 9000);
-            } else {
-                sheet.setColumnWidth(i, 4000);
-            }
-
-            sheet.setDefaultColumnStyle(i, textCellStyle);
-        }
-        sheet.setDefaultRowHeight((short) 400);
-
-        CellStyle cellStyle = workbook.createCellStyle();
-        // 水平居中
-        cellStyle.setAlignment(HorizontalAlignment.CENTER);
-        // 垂直居中
-        cellStyle.setVerticalAlignment(VerticalAlignment.CENTER);
-        // 边框颜色和宽度设置
-        cellStyle.setBorderBottom(BorderStyle.THIN);
-        cellStyle.setBottomBorderColor(IndexedColors.BLACK.getIndex()); // 下边框
-        cellStyle.setBorderLeft(BorderStyle.THIN);
-        cellStyle.setLeftBorderColor(IndexedColors.BLACK.getIndex()); // 左边框
-        cellStyle.setBorderRight(BorderStyle.THIN);
-        cellStyle.setRightBorderColor(IndexedColors.BLACK.getIndex()); // 右边框
-        cellStyle.setBorderTop(BorderStyle.THIN);
-        cellStyle.setTopBorderColor(IndexedColors.BLACK.getIndex()); // 上边框
-        // 设置背景颜色
-        cellStyle.setFillForegroundColor(IndexedColors.GREY_25_PERCENT.getIndex());
-        cellStyle.setFillPattern(FillPatternType.SOLID_FOREGROUND);
-        // 字体设置
-        Font font = workbook.createFont();
-        font.setBold(true);
-        font.setFontName("宋体");
-        font.setFontHeightInPoints((short) 16);
-        cellStyle.setFont(font);
-
-        Row head = sheet.createRow(0);
-        for (int i = 0; i < CELL_HEADERS.size(); i++) {
-            Cell cell = head.createCell(i);
-            cell.setCellValue(CELL_HEADERS.get(i));
-            cell.setCellStyle(cellStyle);
-        }
-        return sheet;
-    }
-
     static void convertDataToRow(Member member, Row row) {
         int cellNumber = 0;
-        createCell(cellNumber++, row, member.getType());
-        createCell(cellNumber++, row, member.getTitle());
-        createCell(cellNumber++, row, member.getAddress());
-        createCell(cellNumber++, row, member.getTelephone());
+        Util.createCell(cellNumber++, row, member.getType());
+        Util.createCell(cellNumber++, row, member.getTitle());
+        Util.createCell(cellNumber++, row, member.getAddress());
+        Util.createCell(cellNumber++, row, member.getTelephone());
 
         String email = member.getEmail();
         if (StringUtils.startsWithIgnoreCase(email, "mailto:")) {
             email = email.substring(7);
         }
-        createCell(cellNumber++, row, StringUtils.trim(email));
+        Util.createCell(cellNumber++, row, StringUtils.trim(email));
         // comment as email may not be valid. TODO: Aad validation
         /*Cell cell = createCell(cellNumber++, row, member.getEmail());
         Hyperlink link = row.getSheet().getWorkbook().getCreationHelper().createHyperlink(HyperlinkType.EMAIL);
         link.setAddress(member.getEmail());
         cell.setHyperlink(link);*/
 
-        createCell(cellNumber++, row, member.getWebUrl());
-        createCell(cellNumber++, row, member.getTwitterAccount());
-        createCell(cellNumber++, row, member.getContacts());
-        createCell(cellNumber++, row, member.getDesc());
+        Util.createCell(cellNumber++, row, member.getWebUrl());
+        Util.createCell(cellNumber++, row, member.getTwitterAccount());
+        Util.createCell(cellNumber++, row, member.getContacts());
+        Util.createCell(cellNumber++, row, member.getDesc());
     }
 
-    static Cell createCell(int cellNumber, Row row, String value) {
-        Cell cell = row.createCell(cellNumber);
-        cell.setCellValue(StringUtils.isNotBlank(value) ? value : "");
-        return cell;
-    }
 
-    static void write(Workbook workbook, String outputFilePath) {
-        // 以文件的形式输出工作簿对象
-        FileOutputStream fileOut = null;
-        try {
-            File exportFile = new File(outputFilePath);
-            if (!exportFile.exists()) {
-                exportFile.createNewFile();
-            }
 
-            fileOut = new FileOutputStream(exportFile);
-            workbook.write(fileOut);
-            fileOut.flush();
-        } catch (Exception e) {
-            System.err.println(e.getMessage());
-        } finally {
-            try {
-                if (null != fileOut) {
-                    fileOut.close();
-                }
-                if (null != workbook) {
-                    workbook.close();
-                }
-            } catch (IOException e) {
-                System.err.println("关闭输出流时发生错误，错误原因：" + e.getMessage());
-            }
-        }
-    }
+
 }
 
