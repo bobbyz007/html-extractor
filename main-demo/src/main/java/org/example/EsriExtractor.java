@@ -15,7 +15,6 @@ import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.streaming.SXSSFWorkbook;
-import org.example.entity.Member;
 import org.example.entity.Partner;
 
 import java.io.IOException;
@@ -24,8 +23,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import static com.alibaba.druid.sql.parser.Token.BY;
 
 public class EsriExtractor {
     static final String URL = "https://esearchapi.esri.com/search";
@@ -73,7 +70,11 @@ public class EsriExtractor {
                 String content = docObj.getString("content");
                 int contactIndex = content.lastIndexOf("Contact us");
                 if (contactIndex != -1) {
-                    partner.setContact(content.substring(contactIndex));
+                    String subContact = content.substring(contactIndex);
+                    int programIndex = subContact.indexOf("                Program");
+                    if (programIndex != -1) {
+                        partner.setContact(subContact.substring(0, programIndex).trim());
+                    }
                 }
             }
 
