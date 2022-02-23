@@ -97,9 +97,10 @@ public class GreenValleyResellerExtractor {
 
     static List<Util.Header> CELL_HEADERS = new ArrayList<>();
     static {
+        CELL_HEADERS.add(new Util.Header("Continent", 4000));
+        CELL_HEADERS.add(new Util.Header("Country", 4000));
         CELL_HEADERS.add(new Util.Header("Title", 4000));
-        CELL_HEADERS.add(new Util.Header("Data", 4000));
-        CELL_HEADERS.add(new Util.Header("Phone", 20000));
+        CELL_HEADERS.add(new Util.Header("Reseller", 20000));
     }
 
     static Workbook export(List<GreenValleyReseller> resellers) {
@@ -124,6 +125,7 @@ public class GreenValleyResellerExtractor {
         int cellNumber = 0;
         Util.createCell(cellNumber++, row, reseller.getContinent());
         Util.createCell(cellNumber++, row, reseller.getCountry());
+        Util.createCell(cellNumber++, row, reseller.getTitle());
         Util.createCell(cellNumber++, row, reseller.getReseller());
     }
 }
