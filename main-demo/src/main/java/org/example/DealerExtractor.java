@@ -76,39 +76,6 @@ public class DealerExtractor {
         return resultDealers;
     }
 
-    static Member parseMember(String memberType, String url) throws IOException {
-        Document memberDoc = Jsoup.connect(url).get();
-        Element pageEle = memberDoc.selectFirst("div#page");
-        Element sectionEle = pageEle.selectFirst("section.main");
-
-        Element titleDiv = sectionEle.selectFirst("section > div > div > div.twelve");
-        Element contentDiv = null;
-        if (titleDiv != null) {
-            contentDiv = titleDiv.parent().nextElementSibling();
-        } else {
-            contentDiv = sectionEle.selectFirst("section > div > div");
-        }
-
-        String title = titleDiv.selectFirst("h1").text();
-
-        String desc = contentDiv.selectFirst("div.six").wholeText();
-
-        Element detailsDiv = contentDiv.selectFirst("div > div.job-details");
-
-        Member member = new Member(memberType, title, desc.trim());
-        for (Element h6Ele : detailsDiv.select("h6")) {
-            String fieldName = h6Ele.text();
-            String fieldValue = h6Ele.nextElementSibling().text();
-            // extract mailto
-            if (fieldName.equals(Member.FIELD_EMAIL)) {
-                fieldValue = h6Ele.nextElementSibling().selectFirst("a").attr("href");
-            }
-            member.setValue(fieldName, fieldValue);
-        }
-
-        return member;
-    }
-
     static List<Util.Header> CELL_HEADERS = new ArrayList<>();
     static {
         CELL_HEADERS.add(new Util.Header("Title", 4000));
