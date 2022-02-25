@@ -44,6 +44,7 @@ dependencies {
     implementation 'org.apache.httpcomponents:httpclient:4.5.13'
     compileOnly 'org.projectlombok:lombok:1.18.22'
     annotationProcessor 'org.projectlombok:lombok:1.18.22'
+    implementation 'com.squareup.okhttp3:okhttp:4.9.3'
 }
 
 bootRun{

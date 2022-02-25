@@ -98,4 +98,9 @@ public class Util {
         cell.setCellValue(StringUtils.isNotBlank(value) ? value : "");
         return cell;
     }
+
+    public static void main(String[] args) {
+        String name = "Mapping/GISout/sdf".replaceAll("[\\\\/]", " ");
+        System.out.println(name);
+    }
 }
