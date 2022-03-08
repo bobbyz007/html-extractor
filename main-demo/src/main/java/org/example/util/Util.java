@@ -1,4 +1,4 @@
-package org.example;
+package org.example.util;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.poi.hssf.usermodel.HSSFDataFormat;
@@ -20,7 +20,7 @@ public class Util {
         }
     }
 
-    static void write(Workbook workbook, String outputFilePath) {
+    public static void write(Workbook workbook, String outputFilePath) {
         // 以文件的形式输出工作簿对象
         FileOutputStream fileOut = null;
         try {
@@ -48,7 +48,7 @@ public class Util {
         }
     }
 
-    static Sheet buildSheet(Workbook workbook, List<Header> headers) {
+    public static Sheet buildSheet(Workbook workbook, List<Header> headers) {
         // build data sheet
         Sheet sheet = workbook.createSheet();
         CellStyle textCellStyle= workbook.createCellStyle();
@@ -93,14 +93,9 @@ public class Util {
         return sheet;
     }
 
-    static Cell createCell(int cellNumber, Row row, String value) {
+    public static Cell createCell(int cellNumber, Row row, String value) {
         Cell cell = row.createCell(cellNumber);
         cell.setCellValue(StringUtils.isNotBlank(value) ? value : "");
         return cell;
-    }
-
-    public static void main(String[] args) {
-        String name = "Mapping/GISout/sdf".replaceAll("[\\\\/]", " ");
-        System.out.println(name);
     }
 }
