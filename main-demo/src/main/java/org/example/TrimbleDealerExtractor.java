@@ -58,11 +58,12 @@ public class TrimbleDealerExtractor {
         List<TrimbleDealer> dealers = new ArrayList<>();
 
         for (String country : COUNTRY_LIST) {
-            System.out.println("fetch country: " + country);
+            System.out.println("Fetching country: " + country);
             int pageStart = 0;
             while (true) {
-                System.out.println("page start: " + pageStart);
+                System.out.println("page: " + pageStart);
                 String html = Jsoup.connect(String.format(URL_TPL_DEALERS, country, pageStart))
+                        .timeout(60000)
                         .get().outerHtml();
                 String locationDataJsonStr = ""; // extract from html
                 for (String line : IOUtils.readLines(new StringReader(html))) {
