@@ -1,12 +1,21 @@
 package org.example.util;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.http.HttpResponse;
+import org.apache.http.HttpStatus;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.entity.StringEntity;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClientBuilder;
+import org.apache.http.util.EntityUtils;
 import org.apache.poi.hssf.usermodel.HSSFDataFormat;
 import org.apache.poi.ss.usermodel.*;
 
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.nio.charset.Charset;
 import java.util.List;
 
 public class Util {
@@ -97,5 +106,43 @@ public class Util {
         Cell cell = row.createCell(cellNumber);
         cell.setCellValue(StringUtils.isNotBlank(value) ? value : "");
         return cell;
+    }
+
+    static final CloseableHttpClient httpClient = HttpClientBuilder.create().build();
+    public static String post(String url, String jsonParams) throws IOException {
+        HttpPost post = new HttpPost(url);
+        // 建立一个NameValuePair数组，用于存储欲传送的参数
+        post.addHeader("Content-type","application/json; charset=utf-8");
+        post.setHeader("Accept", "application/json");
+        post.setEntity(new StringEntity(jsonParams, Charset.forName("UTF-8")));
+
+        HttpResponse response = httpClient.execute(post);
+        int statusCode = response.getStatusLine().getStatusCode();
+
+        if (statusCode != HttpStatus.SC_OK) {
+            System.err.println("Err occurred.");
+            return null;
+        }
+
+        String body = EntityUtils.toString(response.getEntity());
+        return body;
+    }
+
+    public static String get(String url) throws IOException {
+        HttpGet get = new HttpGet(url);
+        // 建立一个NameValuePair数组，用于存储欲传送的参数
+        get.addHeader("Content-type","application/json; charset=utf-8");
+        get.setHeader("Accept", "application/json");
+
+        HttpResponse response = httpClient.execute(get);
+        int statusCode = response.getStatusLine().getStatusCode();
+
+        if (statusCode != HttpStatus.SC_OK) {
+            System.err.println("Err occurred.");
+            return null;
+        }
+
+        String body = EntityUtils.toString(response.getEntity());
+        return body;
     }
 }
