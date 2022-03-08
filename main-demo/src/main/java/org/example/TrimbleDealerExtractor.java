@@ -158,13 +158,13 @@ public class TrimbleDealerExtractor {
 
     static List<Util.Header> CELL_HEADERS = new ArrayList<>();
     static {
-        CELL_HEADERS.add(new Util.Header("Name", 3000));
-        CELL_HEADERS.add(new Util.Header("Address", 15000));
-        CELL_HEADERS.add(new Util.Header("country", 1000));
-        CELL_HEADERS.add(new Util.Header("Email", 2000));
-        CELL_HEADERS.add(new Util.Header("Link", 3000));
-        CELL_HEADERS.add(new Util.Header("Phone", 3000));
-        CELL_HEADERS.add(new Util.Header("Specialty", 3000));
+        CELL_HEADERS.add(new Util.Header("Name", 4000));
+        CELL_HEADERS.add(new Util.Header("Address", 10000));
+        CELL_HEADERS.add(new Util.Header("country", 3000));
+        CELL_HEADERS.add(new Util.Header("Email", 3000));
+        CELL_HEADERS.add(new Util.Header("Link", 4000));
+        CELL_HEADERS.add(new Util.Header("Phone", 4000));
+        CELL_HEADERS.add(new Util.Header("Specialty", 4000));
     }
 
     static Workbook export(List<TrimbleDealer> dealers) {
