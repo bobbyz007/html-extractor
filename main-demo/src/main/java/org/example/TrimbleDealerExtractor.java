@@ -42,7 +42,7 @@ public class TrimbleDealerExtractor {
         List<String> resultList = new ArrayList<>();
         try {
             Document select = Jsoup.parse(FileUtils.readFileToString(
-                    new File("D:\\workspace\\new\\html-extractor\\main-demo\\src\\main\\resources\\data\\trimble-dealer-country-list.html"),
+                    new File("D:\\workspace\\html-extractor\\main-demo\\src\\main\\resources\\data\\trimble-dealer-country-list.html"),
                     StandardCharsets.UTF_8));
             Elements options = select.select("option");
             for (Element option : options) {
@@ -58,8 +58,10 @@ public class TrimbleDealerExtractor {
         List<TrimbleDealer> dealers = new ArrayList<>();
 
         for (String country : COUNTRY_LIST) {
+            System.out.println("fetch country: " + country);
             int pageStart = 0;
             while (true) {
+                System.out.println("page start: " + pageStart);
                 String html = Jsoup.connect(String.format(URL_TPL_DEALERS, country, pageStart))
                         .get().outerHtml();
                 String locationDataJsonStr = ""; // extract from html
