@@ -97,6 +97,9 @@ public class TrimbleDealerExtractor {
 
                 pageStart += PAGE_STEP;
             }
+
+            // sleep seconds between country
+            Thread.sleep(2000);
         }
 
         // output result members
