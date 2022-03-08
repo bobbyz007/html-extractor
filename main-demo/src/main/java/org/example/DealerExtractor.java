@@ -31,7 +31,7 @@ public class DealerExtractor {
         // output result members
         // https://www.cnblogs.com/Dreamer-1/p/10469430.html
         Workbook workbook = export(dealers);
-        Util.write(workbook, "/home/justin/workspace/html-extractor/result/dealer-result-4.xlsx");
+        Util.write(workbook, "result/dealer-result-4.xlsx");
     }
 
     static List<Dealer> fetchHtmlContent(String url) throws InterruptedException, IOException {

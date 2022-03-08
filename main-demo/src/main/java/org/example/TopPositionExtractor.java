@@ -111,7 +111,7 @@ public class TopPositionExtractor {
         }
 
         Workbook workbook = export(resultDealers);
-        Util.write(workbook, "/home/justin/workspace/html-extractor/result/toppositioning-dealer-result.xlsx");
+        Util.write(workbook, "result/toppositioning-dealer-result.xlsx");
     }
 
     static Map<String, String> parseSelect(String selectHtml) {

@@ -49,7 +49,7 @@ public class SurveyingMemberExtractor {
         Set<SurveyMember> results = fetchSurveyMembers();
 
         Workbook workbook = export(results);
-        Util.write(workbook, "/home/justin/workspace/html-extractor/result/surveying-member.xlsx");
+        Util.write(workbook, "result/surveying-member.xlsx");
     }
 
     static Set<SurveyMember> fetchSurveyMembers() throws IOException {

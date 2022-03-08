@@ -85,7 +85,7 @@ public class EsriExtractor {
         } while (!finished);
 
         Workbook workbook = export(resultList);
-        Util.write(workbook, "/home/justin/workspace/html-extractor/result/partner-result.xlsx");
+        Util.write(workbook, "result/partner-result.xlsx");
     }
 
     static Map<String, Object> initRequestMap() {

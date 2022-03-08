@@ -43,7 +43,7 @@ public class DjiMainlandStoreExtractor {
         // output result members
         // https://www.cnblogs.com/Dreamer-1/p/10469430.html
         Workbook workbook = export(stores);
-        Util.write(workbook, "dji-mainland-stores.xlsx");
+        Util.write(workbook, "result/dji-mainland-stores.xlsx");
     }
 
     static List<Util.Header> CELL_HEADERS = new ArrayList<>();

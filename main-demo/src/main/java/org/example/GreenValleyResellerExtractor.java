@@ -74,7 +74,7 @@ public class GreenValleyResellerExtractor {
         // output result members
         // https://www.cnblogs.com/Dreamer-1/p/10469430.html
         Workbook workbook = export(resellers);
-        Util.write(workbook, "/home/justin/workspace/html-extractor/result/greenvalley-reseller-result.xlsx");
+        Util.write(workbook, "result/greenvalley-reseller-result.xlsx");
     }
 
     static String get(String url) throws IOException {
