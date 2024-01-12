@@ -1,15 +1,13 @@
-import org.gradle.process.internal.JvmOptions
-
 plugins {
-    id 'org.springframework.boot' version '2.5.2' // nacos不兼容最新版本 2.5.2
-    id 'io.spring.dependency-management' version '1.0.11.RELEASE'
+    id 'org.springframework.boot' version '3.2.1'
+    id 'io.spring.dependency-management' version '1.1.4'
     id 'java'
     id 'war'
 }
 
 group 'org.example'
 version '1.0-SNAPSHOT'
-sourceCompatibility = '11'
+sourceCompatibility = '21'
 
 dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-web'
@@ -19,33 +17,34 @@ dependencies {
     // 包含管理服务，比如应用健康检查等等 http://localhost:8081/actuator/health
     implementation 'org.springframework.boot:spring-boot-starter-actuator'
     // mybatis starter
-    implementation 'org.mybatis.spring.boot:mybatis-spring-boot-starter:2.2.0'
+    implementation 'org.mybatis.spring.boot:mybatis-spring-boot-starter:3.0.3'
     // mysql driver
-    runtimeOnly 'mysql:mysql-connector-java:8.0.25'
-    implementation 'org.redisson:redisson-spring-boot-starter:3.16.0'
+    runtimeOnly 'com.mysql:mysql-connector-j:8.2.0'
+
+    implementation 'org.redisson:redisson-spring-boot-starter:3.25.2'
 
     // alibaba druid db connect pool
-    implementation 'com.alibaba:druid-spring-boot-starter:1.2.6'
+    implementation 'com.alibaba:druid-spring-boot-starter:1.2.21'
 
     implementation 'log4j:log4j:1.2.17'
 
     providedRuntime 'org.springframework.boot:spring-boot-starter-tomcat'
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
 
-    implementation 'org.jsoup:jsoup:1.14.3'
-    implementation 'org.apache.poi:poi:4.1.2'
-    implementation 'com.alibaba:easyexcel:3.2.1'
-    implementation 'org.apache.poi:poi-ooxml:4.1.2'
-    implementation group: 'com.google.guava', name: 'guava', version: '30.1.1-jre'
-    implementation group: 'commons-io', name: 'commons-io', version: '2.10.0'
-    implementation group: 'org.apache.commons', name: 'commons-lang3', version: '3.12.0'
-    implementation group: 'io.netty', name: 'netty-codec-http', version: '4.1.65.Final'
+    implementation 'org.jsoup:jsoup:1.17.2'
+    implementation 'org.apache.poi:poi:5.2.5'
+    implementation 'com.alibaba:easyexcel:3.3.3'
+    implementation 'org.apache.poi:poi-ooxml:5.2.5'
+    implementation group: 'com.google.guava', name: 'guava', version: '33.0.0-jre'
+    implementation group: 'commons-io', name: 'commons-io', version: '2.15.1'
+    implementation group: 'org.apache.commons', name: 'commons-lang3', version: '3.14.0'
+    implementation group: 'io.netty', name: 'netty-codec-http', version: '4.1.104.Final'
     implementation group: 'org.openjdk.jol', name: 'jol-cli', version: '0.16'
-    implementation 'com.alibaba:fastjson:1.2.79'
+    implementation 'com.alibaba.fastjson2:fastjson2:2.0.45'
     implementation 'org.apache.httpcomponents:httpclient:4.5.13'
-    compileOnly 'org.projectlombok:lombok:1.18.22'
-    annotationProcessor 'org.projectlombok:lombok:1.18.22'
-    implementation 'com.squareup.okhttp3:okhttp:4.9.3'
+    compileOnly 'org.projectlombok:lombok:1.18.30'
+    annotationProcessor 'org.projectlombok:lombok:1.18.30'
+    implementation 'com.squareup.okhttp3:okhttp:4.12.0'
 }
 
 bootRun{

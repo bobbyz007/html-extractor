@@ -4,6 +4,7 @@ version '1.0-SNAPSHOT'
 allprojects {
     repositories {
         maven { url 'https://maven.aliyun.com/repository/public/' }
+        maven { url "https://mirrors.huaweicloud.com/repository/maven/" }
         mavenCentral()
     }
 }
