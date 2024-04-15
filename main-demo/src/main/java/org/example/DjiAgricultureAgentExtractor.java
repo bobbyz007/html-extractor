@@ -38,12 +38,13 @@ public class DjiAgricultureAgentExtractor {
                 String countryName = countryObj.getString("name");
 
                 // exclude china
-                if (StringUtils.equals(code, "cn")) {
+                /*if (StringUtils.equals(code, "cn")) {
                     continue;
-                }
+                }*/
                 String agentStr = Util.get(String.format(TPL_AGENT_URL, code));
                 JSONObject agentsJson = JSON.parseObject(agentStr);
                 JSONArray areaArr = agentsJson.getJSONArray("data");
+                System.out.println("Extracting agriculture agent for: " + countryName);
                 if (areaArr.size() == 0) {
                     System.err.println("No agriculture agent for " + countryName);
                     continue;
