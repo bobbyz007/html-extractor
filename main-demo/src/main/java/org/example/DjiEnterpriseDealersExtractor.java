@@ -37,9 +37,9 @@ public class DjiEnterpriseDealersExtractor {
                 String countryName = countryObj.getString("name");
 
                 // exclude china
-                if (StringUtils.equals(code, "cn")) {
+                /*if (StringUtils.equals(code, "cn")) {
                     continue;
-                }
+                }*/
                 String agentStr = Util.get(String.format(TPL_DEALER_URL, code));
                 JSONObject agentsJson = JSON.parseObject(agentStr);
                 JSONArray areaArr = agentsJson.getJSONArray("data");
